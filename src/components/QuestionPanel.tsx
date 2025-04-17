@@ -31,56 +31,62 @@ const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult }: P
                 </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {questions.map((q, idx) => (
-                    <div key={idx} className="border rounded p-4 shadow-sm bg-white">
-                        <div className="font-semibold mb-2">
-                            {idx + 1}. {q.question}
+                {questions.map((q, idx) => {
+                    const isCorrect = String(userAnswers[idx]) === String(q.answer);
+                    return (
+                        <div key={idx} className="border rounded p-4 shadow-sm bg-white">
+                            <div className="font-semibold mb-2">
+                                {idx + 1}. {q.question}
+                            </div>
+                            {q.type === 'objective' && q.choices && (
+                                <div className="space-y-1">
+                                    {q.choices.map((choice, cIdx) => (
+                                        <label key={cIdx} className="block">
+                                            <input
+                                                type="radio"
+                                                name={`q${idx}`}
+                                                value={cIdx}
+                                                checked={userAnswers[idx] === cIdx}
+                                                onChange={() => handleChange(idx, cIdx)}
+                                                disabled={showResult}
+                                                className="mr-2"
+                                            />
+                                            {choice}
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+
+                            {q.type === 'subjective' && (
+                                <input
+                                    type="text"
+                                    value={userAnswers[idx] as string}
+                                    onChange={(e) => handleChange(idx, e.target.value)}
+                                    className="w-full border rounded p-2 mt-2"
+                                    placeholder="정답 입력"
+                                    disabled={showResult}
+                                />
+                            )}
+
+                            {showResult && (
+                                <div className="mt-2 text-sm">
+                                    {isCorrect ? (
+                                        <>
+                                            <span className="text-green-600">✅ 정답입니다!</span>
+                                            <div className="text-gray-500 mt-1">설명: {q.explanation}</div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="text-red-500">❌ 오답입니다.</div>
+                                            <div className="text-gray-700">정답: {q.type === 'objective' ? q.choices?.[q.answer as number] : q.answer}</div>
+                                            <div className="text-gray-500 mt-1">설명: {q.explanation}</div>
+                                        </>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                        {q.type === 'objective' && q.choices && (
-                            <div className="space-y-1">
-                                {q.choices.map((choice, cIdx) => (
-                                    <label key={cIdx} className="block">
-                                        <input
-                                            type="radio"
-                                            name={`q${idx}`}
-                                            value={cIdx}
-                                            checked={userAnswers[idx] === cIdx}
-                                            onChange={() => handleChange(idx, cIdx)}
-                                            disabled={showResult}
-                                            className="mr-2"
-                                        />
-                                        {choice}
-                                    </label>
-                                ))}
-                            </div>
-                        )}
-
-                        {q.type === 'subjective' && (
-                            <input
-                                type="text"
-                                value={userAnswers[idx] as string}
-                                onChange={(e) => handleChange(idx, e.target.value)}
-                                className="w-full border rounded p-2 mt-2"
-                                placeholder="정답 입력"
-                                disabled={showResult}
-                            />
-                        )}
-
-                        {showResult && (
-                            <div className="mt-2 text-sm">
-                                {String(userAnswers[idx]) === String(q.answer) ? (
-                                    <span className="text-green-600">✅ 정답입니다!</span>
-                                ) : (
-                                    <>
-                                        <div className="text-red-500">❌ 오답입니다.</div>
-                                        <div className="text-gray-700">정답: {q.type === 'objective' ? q.choices?.[q.answer as number] : q.answer}</div>
-                                        <div className="text-gray-500 mt-1">설명: {q.explanation}</div>
-                                    </>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
