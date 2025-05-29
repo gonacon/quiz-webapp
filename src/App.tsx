@@ -3,6 +3,8 @@ import Sidebar from './components/Sidebar';
 import QuestionPanel from './components/QuestionPanel';
 
 export type Question = {
+  passageTitle: string;
+  passage: string;
   question: string;
   choices?: string[];
   answer: number | string;
@@ -13,10 +15,10 @@ export type Question = {
 export type QuestionSet = Record<string, Question[]>;
 
 function App() {
-  const [grade, setGrade] = useState("grade3");
-  const [semester, setSemester] = useState("sem1");
-  const [examType, setExamType] = useState("mid");
-  const [subject, setSubject] = useState("korean");
+  const [grade, setGrade] = useState("grade3"); // 학년
+  const [semester, setSemester] = useState("sem1"); // 학기
+  const [examType, setExamType] = useState("mid"); // 중간, 기말
+  const [subject, setSubject] = useState("korean"); // 과목
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [userAnswers, setUserAnswers] = useState<(string | number)[]>([]);
