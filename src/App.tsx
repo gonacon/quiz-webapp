@@ -27,23 +27,17 @@ function App() {
 
   const getFileName = () => `${grade}_${semester}_${examType}_${subject}.json`;
 
-  const generateBalancedQuestions = (data: QuestionSet, count = 20): Question[] => {
+  const generateBalancedQuestions = (data: QuestionSet): Question[] => {
     const categories = Object.keys(data);
     const result: Question[] = [];
 
-    while (result.length < count) {
-      for (const category of categories) {
-        const pool = data[category];
-        if (!pool || pool.length === 0) continue;
+    for (const category of categories) {
+      const pool = data[category];
+      if (!pool || pool.length === 0) continue;
 
-        const remaining = count - result.length;
-        const questionCount = Math.min(1, pool.length, remaining);
-
-        const selected = pool.sort(() => Math.random() - 0.5).slice(0, questionCount);
-        result.push(...selected);
-
-        if (result.length >= count) break;
-      }
+      // 섞어서 전체 문제 모두 추가
+      const shuffled = [...pool].sort(() => Math.random() - 0.5);
+      result.push(...shuffled);
     }
 
     return result;
@@ -125,7 +119,7 @@ function App() {
                   className="bg-blue-500 text-white px-4 py-2 rounded"
                   onClick={generateQuestions}
               >
-                문제 생성
+                문제 재배치
               </button>
               <button
                   className="bg-green-500 text-white px-4 py-2 rounded"
