@@ -26,15 +26,15 @@ const translateSubject = (s: string) => {
 };
 
 const Sidebar = ({
-                     grade,
-                     semester,
-                     examType,
-                     subject,
-                     onChangeGrade,
-                     onChangeSemester,
-                     onChangeExamType,
-                     onChangeSubject,
-                 }: Props) => {
+    grade,
+    semester,
+    examType,
+    subject,
+    onChangeGrade,
+    onChangeSemester,
+    onChangeExamType,
+    onChangeSubject,
+}: Props) => {
     return (
         <div className="w-64 bg-gray-100 p-4 border-r flex flex-col h-screen justify-between">
             <div>
@@ -83,9 +83,8 @@ const Sidebar = ({
                             <button
                                 key={s}
                                 onClick={() => onChangeSubject(s)}
-                                className={`px-3 py-2 rounded text-sm font-medium text-center ${
-                                    subject === s ? 'bg-blue-500 text-white' : 'bg-white border text-gray-700'
-                                }`}
+                                className={`px-3 py-2 rounded text-sm font-medium text-center ${subject === s ? 'bg-blue-500 text-white' : 'bg-white border text-gray-700'
+                                    }`}
                             >
                                 {translateSubject(s)}
                             </button>
@@ -94,16 +93,30 @@ const Sidebar = ({
                 </div>
             </div>
 
-            {/* 최하단 고정 이메일 문의 */}
-            <div className="text-center border-t pt-4">
-                <p className="text-sm text-gray-600">
-                    <span className="mr-2">문의사항은</span>
-                    <a href="mailto:your@email.com" className="text-blue-500 underline">
-                        이메일
-                    </a>
-                    <span>로 연락주세요</span>
-                </p>
+            {/* 하단: 문제 만들기 버튼 + 문의사항 */}
+            <div>
+                {/* 문제 만들기 버튼 */}
+                <div className="mb-4">
+                    <button
+                        onClick={() => window.location.href = "/create"}
+                        className="w-full bg-green-500 text-white py-2 rounded font-semibold hover:bg-green-600"
+                    >
+                        문제 만들기
+                    </button>
+                </div>
+
+                {/* 문의사항 */}
+                <div className="text-center border-t pt-4">
+                    <p className="text-sm text-gray-600">
+                        <span className="mr-2">문의사항은</span>
+                        <a href="mailto:gonacon@gmail.com" className="text-blue-500 underline">
+                            이메일
+                        </a>
+                        <span>로 연락주세요</span>
+                    </p>
+                </div>
             </div>
+
         </div>
     );
 };
