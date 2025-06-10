@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import SelectInput from "components/SelectInput";
+import ScrollToTopButton from "components/ScrollToTopButton";
 
 interface Question {
     passageTitle: string;
@@ -13,6 +15,10 @@ interface Question {
 
 const CreateQuestion: React.FC = () => {
     const navigate = useNavigate();
+    const [grade, setGrade] = useState("grade3");
+    const [semester, setSemester] = useState("sem1");
+    const [examType, setExamType] = useState("mid");
+    const [subject, setSubject] = useState("korean");
     const [fileName, setFileName] = useState("");
     const [questions, setQuestions] = useState<Question[]>([
         {
@@ -25,6 +31,8 @@ const CreateQuestion: React.FC = () => {
             type: "objective",
         },
     ]);
+
+    const questionRefs = useRef<HTMLDivElement[]>([]);
 
     const handleChange = (
         index: number,
@@ -80,6 +88,12 @@ const CreateQuestion: React.FC = () => {
                 type: "objective",
             },
         ]);
+
+        // 약간의 delay 후 스크롤 이동
+        setTimeout(() => {
+            const lastIndex = questionRefs.current.length - 1;
+            questionRefs.current[lastIndex]?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
     };
 
     const removeQuestion = (index: number) => {
@@ -107,29 +121,77 @@ const CreateQuestion: React.FC = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "questions.json";
+        const filename = `${grade}_${semester}_${examType}_${subject}_set.json`;
+
+        a.download = filename;
         a.click();
     };
 
     return (
-        <div className="p-4">
+        <div className="p-4 mt-14" >
             {/* Navigation Buttons */}
-            <div className="flex gap-4 mb-6">
-                <button
-                    onClick={() => navigate("/")}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                    홈으로
-                </button>
-                <button
-                    onClick={() => navigate("/quiz")}
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                >
-                    문제 풀러가기
-                </button>
+            <div className="fixed top-0 left-0 right-0 bg-gray-100 z-50 p-4 shadow-md flex flex-col gap-4">
+                <div className="flex gap-4">
+                    <button
+                        onClick={() => navigate("/")}
+                        className="bg-blue-500 text-white px-4 mt-4 mb-4 rounded hover:bg-blue-600"
+                    >
+                        홈으로
+                    </button>
+                    <button
+                        onClick={() => navigate("/quiz")}
+                        className="bg-green-500 text-white px-4 mt-4 mb-4 rounded hover:bg-green-600"
+                    >
+                        문제 풀러가기
+                    </button>
+                    <div className="mb-4 grid grid-cols-2 md:grid-cols-5 gap-2">
+                        <SelectInput
+                            label="학년"
+                            value={grade}
+                            onChange={setGrade}
+                            options={[
+                                { value: "grade2", label: "중학교 2학년" },
+                                { value: "grade3", label: "중학교 3학년" },
+                                { value: "grade10", label: "고등학교 1학년" },
+                                { value: "grade11", label: "고등학교 2학년" },
+                                { value: "grade12", label: "고등학교 3학년" },
+                            ]}
+                        />
+                        <SelectInput
+                            label="학기"
+                            value={semester}
+                            onChange={setSemester}
+                            options={[
+                                { value: "sem1", label: "1학기" },
+                                { value: "sem2", label: "2학기" },
+                            ]}
+                        />
+                        <SelectInput
+                            label="시험 유형"
+                            value={examType}
+                            onChange={setExamType}
+                            options={[
+                                { value: "mid", label: "중간고사" },
+                                { value: "final", label: "기말고사" },
+                            ]}
+                        />
+                        <SelectInput
+                            label="과목"
+                            value={subject}
+                            onChange={setSubject}
+                            options={[
+                                { value: "korean", label: "국어" },
+                                { value: "math", label: "수학" },
+                                { value: "english", label: "영어" },
+                                { value: "science", label: "과학" },
+                                { value: "social", label: "사회" },
+                            ]}
+                        />
+                    </div>
+                </div>
             </div>
 
-            <div className="p-6">
+            <div className="p-6 mt-14">
                 <div className="mb-4">
                     <label className="block font-semibold mb-1">파일 제목 (확장자 제외)</label>
                     <input
@@ -146,6 +208,7 @@ const CreateQuestion: React.FC = () => {
                 {questions.map((q, i) => (
                     <div
                         key={i}
+                        ref={(el) => (questionRefs.current[i] = el)}
                         className="relative border p-4 mb-6 rounded bg-gray-50"
                     >
                         {/* 삭제 버튼 */}
@@ -242,6 +305,7 @@ const CreateQuestion: React.FC = () => {
                     </button>
                 </div>
             </div>
+            <ScrollToTopButton />
         </div>
     );
 };

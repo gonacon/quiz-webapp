@@ -1,5 +1,6 @@
 // File: src/components/Sidebar.tsx
 import React from "react";
+import SelectInput from "components/SelectInput";
 
 type Props = {
     grade: string;
@@ -40,41 +41,41 @@ const Sidebar = ({
             <div>
                 <h2 className="text-lg font-bold mb-4">시험 설정</h2>
 
-                <div className="mb-3">
-                    <label className="block text-sm font-semibold mb-1">학년</label>
-                    <select
-                        className="w-full border p-2 rounded"
-                        value={grade}
-                        onChange={(e) => onChangeGrade(e.target.value)}
-                    >
-                        <option value="grade2">중학교 2학년</option>
-                        <option value="grade3">중학교 3학년</option>
-                    </select>
-                </div>
+                <SelectInput
+                    className="mb-3"
+                    label="학년"
+                    value={grade}
+                    onChange={onChangeGrade}
+                    options={[
+                        { value: "grade2", label: "중학교 2학년" },
+                        { value: "grade3", label: "중학교 3학년" },
+                        { value: "grade10", label: "고등학교 1학년" },
+                        { value: "grade11", label: "고등학교 2학년" },
+                        { value: "grade12", label: "고등학교 3학년" },
+                    ]}
+                />
 
-                <div className="mb-3">
-                    <label className="block text-sm font-semibold mb-1">학기</label>
-                    <select
-                        className="w-full border p-2 rounded"
-                        value={semester}
-                        onChange={(e) => onChangeSemester(e.target.value)}
-                    >
-                        <option value="sem1">1학기</option>
-                        <option value="sem2">2학기</option>
-                    </select>
-                </div>
+                <SelectInput
+                    className="mb-3"
+                    label="학기"
+                    value={semester}
+                    onChange={onChangeSemester}
+                    options={[
+                        { value: "sem1", label: "1학기" },
+                        { value: "sem2", label: "2학기" },
+                    ]}
+                />
 
-                <div className="mb-3">
-                    <label className="block text-sm font-semibold mb-1">시험 종류</label>
-                    <select
-                        className="w-full border p-2 rounded"
-                        value={examType}
-                        onChange={(e) => onChangeExamType(e.target.value)}
-                    >
-                        <option value="mid">중간고사</option>
-                        <option value="final">기말고사</option>
-                    </select>
-                </div>
+                <SelectInput
+                    className="mb-3"
+                    label="시험 종류"
+                    value={examType}
+                    onChange={onChangeExamType}
+                    options={[
+                        { value: "mid", label: "중간고사" },
+                        { value: "final", label: "기말고사" },
+                    ]}
+                />
 
                 <div className="mb-3">
                     <label className="block text-sm font-semibold mb-1">과목</label>
@@ -95,6 +96,14 @@ const Sidebar = ({
 
             {/* 하단: 문제 만들기 버튼 + 문의사항 */}
             <div>
+                {/* 사용 안내 문구 */}
+                <div className="mb-4 p-3 bg-white border rounded text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                    {`📘 문제 등록 안내
+1. 아래에서 문제 만들기로 시험 문제를 작성해 주세요.
+2. 작성이 완료되면 “JSON 다운로드” 버튼을 눌러 파일을 저장하세요.
+3. 저장한 파일을 아래 이메일로 보내 주세요.
+4. 파일을 확인한 후, 문제는 자동으로 시스템에 등록되어 시험에 표시됩니다.`}
+                </div>
                 {/* 문제 만들기 버튼 */}
                 <div className="mb-4">
                     <button

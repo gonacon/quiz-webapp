@@ -2,6 +2,10 @@
   "compilerOptions": {
     "jsx": "react-jsx", // 또는 "react" (React 17 이하 버전 사용 시)
     "resolveJsonModule": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "baseUrl": "src"
+  },
+  "include": [
+    "src"
+  ]
 }

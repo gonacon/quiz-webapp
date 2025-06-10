@@ -1,9 +1,10 @@
 // src/pages/QuizPage.tsx
 import React, { useState, useEffect, useCallback } from "react";
-import Sidebar from '../components/Sidebar';
-import QuestionPanel from '../components/QuestionPanel';
-import { Question, QuestionSet } from '../types';
-import QuestionSetSelector from "../components/QuestionSelector";
+import Sidebar from 'components/Sidebar';
+import QuestionPanel from 'components/QuestionPanel';
+import { Question, QuestionSet } from 'types';
+import QuestionSetSelector from "components/QuestionSelector";
+import ScrollToTopButton from "components/ScrollToTopButton";
 
 function QuizPage() {
     const [ grade, setGrade ] = useState("grade3");
@@ -92,7 +93,10 @@ function QuizPage() {
         const maps: Record<string, Record<string, string>> = {
             grade: {
                 grade2: '중학교 2학년',
-                grade3: '중학교 3학년'
+                grade3: '중학교 3학년',
+                grade10: '고등학교 1학년',
+                grade11: '고등학교 2학년',
+                grade12: '고등학교 3학년',
             },
             semester: {
                 sem1: '1학기',
@@ -208,6 +212,7 @@ function QuizPage() {
                     />
                 ) }
             </div>
+        <ScrollToTopButton />
         </div>
     );
 }
