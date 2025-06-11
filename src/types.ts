@@ -6,6 +6,7 @@ export type Question = {
     answer: number | string;
     explanation: string;
     type?: "objective" | "subjective";
+    image?: string;
 };
 
 export type IndexItem = {
@@ -14,5 +15,6 @@ export type IndexItem = {
 };
 
 export type QuestionSet = {
-    [category: string]: Question[];
+    title: string;
+    list: Question[];
 };

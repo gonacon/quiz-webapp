@@ -1,7 +1,9 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import SelectInput from "components/SelectInput";
+import QuestionForm from "components/QuestionForm";
+import ExamSettings from "components/ExamSettings";
 import ScrollToTopButton from "components/ScrollToTopButton";
+import { exportToJsonFile } from "utils/exportToJsonFile";
 
 interface Question {
     passageTitle: string;
@@ -11,6 +13,7 @@ interface Question {
     answer: number;
     explanation: string;
     type: string;
+    image: string;
 }
 
 const CreateQuestion: React.FC = () => {
@@ -29,6 +32,7 @@ const CreateQuestion: React.FC = () => {
             answer: 0,
             explanation: "",
             type: "objective",
+            image: "",
         },
     ]);
 
@@ -86,6 +90,7 @@ const CreateQuestion: React.FC = () => {
                 answer: 0,
                 explanation: "",
                 type: "objective",
+                image: "",
             },
         ]);
 
@@ -106,25 +111,19 @@ const CreateQuestion: React.FC = () => {
         const result = {
             title: fileName,
             list: questions.map((q) => ({
-                passageTitle: "",
-                passage: "",
+                passageTitle: q.passageTitle,
+                passage: q.passage,
                 question: q.question,
                 choices: q.choices,
                 answer: q.answer,
-                explanation: "",
-                type: "objective"
+                explanation: q.explanation,
+                type: "objective",
+                image: q.image
             })),
         };
 
-        const json = JSON.stringify(result, null, 2);
-        const blob = new Blob([json], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
         const filename = `${grade}_${semester}_${examType}_${subject}_set.json`;
-
-        a.download = filename;
-        a.click();
+        exportToJsonFile(result, filename);
     };
 
     return (
@@ -138,56 +137,13 @@ const CreateQuestion: React.FC = () => {
                     >
                         홈으로
                     </button>
-                    <button
-                        onClick={() => navigate("/quiz")}
-                        className="bg-green-500 text-white px-4 mt-4 mb-4 rounded hover:bg-green-600"
-                    >
-                        문제 풀러가기
-                    </button>
-                    <div className="mb-4 grid grid-cols-2 md:grid-cols-5 gap-2">
-                        <SelectInput
-                            label="학년"
-                            value={grade}
-                            onChange={setGrade}
-                            options={[
-                                { value: "grade2", label: "중학교 2학년" },
-                                { value: "grade3", label: "중학교 3학년" },
-                                { value: "grade10", label: "고등학교 1학년" },
-                                { value: "grade11", label: "고등학교 2학년" },
-                                { value: "grade12", label: "고등학교 3학년" },
-                            ]}
-                        />
-                        <SelectInput
-                            label="학기"
-                            value={semester}
-                            onChange={setSemester}
-                            options={[
-                                { value: "sem1", label: "1학기" },
-                                { value: "sem2", label: "2학기" },
-                            ]}
-                        />
-                        <SelectInput
-                            label="시험 유형"
-                            value={examType}
-                            onChange={setExamType}
-                            options={[
-                                { value: "mid", label: "중간고사" },
-                                { value: "final", label: "기말고사" },
-                            ]}
-                        />
-                        <SelectInput
-                            label="과목"
-                            value={subject}
-                            onChange={setSubject}
-                            options={[
-                                { value: "korean", label: "국어" },
-                                { value: "math", label: "수학" },
-                                { value: "english", label: "영어" },
-                                { value: "science", label: "과학" },
-                                { value: "social", label: "사회" },
-                            ]}
-                        />
-                    </div>
+                    {/* 파일 생성 옵션 */}
+                    <ExamSettings
+                        grade={grade} setGrade={setGrade}
+                        semester={semester} setSemester={setSemester}
+                        examType={examType} setExamType={setExamType}
+                        subject={subject} setSubject={setSubject}
+                    />
                 </div>
             </div>
 
@@ -206,88 +162,18 @@ const CreateQuestion: React.FC = () => {
 
                 {/* 문제 생성 폼 */}
                 {questions.map((q, i) => (
-                    <div
+                    <QuestionForm
                         key={i}
-                        ref={(el) => (questionRefs.current[i] = el)}
-                        className="relative border p-4 mb-6 rounded bg-gray-50"
-                    >
-                        {/* 삭제 버튼 */}
-                        <button
-                            onClick={() => removeQuestion(i)}
-                            className="absolute top-2 right-2 bg-orange-500 text-yellow-300 text-[15px] px-2 py-1 rounded hover:bg-red-600 leading-tight">
-                            삭 제
-                        </button>
-                        {/* 문제 입력 */}
-                        <label className="block font-semibold mb-2">문제 {i + 1}</label>
-                        <label className="block mb-1">지문 제목</label>
-                        <input
-                            type="text"
-                            className="w-full p-2 border mb-3"
-                            value={q.passageTitle}
-                            onChange={(e) => handleChange(i, "passageTitle", e.target.value)}
-                        />
-
-                        <label className="block mb-1">지문 내용</label>
-                        <textarea
-                            className="w-full p-2 border mb-3 h-40"
-                            value={q.passage}
-                            onChange={(e) => handleChange(i, "passage", e.target.value)}
-                        />
-
-                        <label className="block mb-1">문제</label>
-                        <input
-                            type="text"
-                            className="w-full p-2 border mb-3"
-                            value={q.question}
-                            onChange={(e) => handleChange(i, "question", e.target.value)}
-                        />
-
-                        <label className="block mb-1">선택지</label>
-                        {q.choices.map((opt, j) => (
-                            <div key={j} className="flex items-center gap-2 mb-2">
-                                <span>{j + 1}. </span>
-                                <input
-                                    type="radio"
-                                    name={`answer-${i}`}
-                                    className="mr-2"
-                                    checked={q.answer === j}
-                                    onChange={() => handleChange(i, "answer", j)}
-                                />
-                                <input
-                                    type="text"
-                                    className="flex-1 p-2 border rounded"
-                                    value={opt}
-                                    onChange={(e) => handleChoiceChange(i, j, e.target.value)}
-                                />
-                                {q.choices.length > 1 && (
-                                    <button
-                                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 whitespace-nowrap"
-                                        onClick={() => removeChoice(i, j)}
-                                    >
-                                        삭제
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-
-                        <div className="mt-2">
-                            <button
-                                className="bg-gray-300 hover:bg-gray-400 text-blue-800 px-3 py-1 rounded text-sm"
-                                onClick={() => addChoice(i)}
-                            >
-                                선택지 추가
-                            </button>
-                        </div>
-
-                        <label className="block mb-1">해설</label>
-                        <textarea
-                            className="w-full p-2 border mb-3"
-                            value={q.explanation}
-                            onChange={(e) => handleChange(i, "explanation", e.target.value)}
-                        />
-                    </div>
+                        ref={(el) => (questionRefs.current[i] = el!)}
+                        index={i}
+                        question={q}
+                        onChange={handleChange}
+                        onChoiceChange={handleChoiceChange}
+                        onRemove={removeQuestion}
+                        onAddChoice={addChoice}
+                        onRemoveChoice={removeChoice}
+                    />
                 ))}
-
 
                 <div className="flex gap-4">
                     <button

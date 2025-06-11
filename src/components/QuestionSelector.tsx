@@ -9,26 +9,43 @@ interface Props {
 
 export default function QuestionSetSelector({ availableSets, onSelect, onClose }: Props) {
     return (
-        <div className="fixed top-20 right-6 z-50 bg-white border border-gray-300 shadow-lg rounded p-4 w-80">
-            <div className="mb-2 font-semibold">문제 선택:</div>
-            <div className="grid grid-cols-1 gap-2">
-                {availableSets.map(({ name, file }) => (
-                    <button
-                        key={file}
-                        className="bg-gray-100 hover:bg-gray-200 text-sm px-2 py-1 rounded text-left"
-                        onClick={() => onSelect(name, file)}
-                    >
-                        {name}
-                    </button>
-                ))}
-            </div>
-            <div className="text-right mt-3">
-                <button
-                    className="text-sm text-blue-600 hover:underline"
-                    onClick={onClose}
-                >
-                    닫기
-                </button>
+        // 반투명 오버레이 배경
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            {/* 모달 컨테이너 */}
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+                {/* 헤더 */}
+                <div className="px-6 py-4 border-b">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-semibold text-gray-800">문제 선택</h2>
+                        <button
+                            onClick={onClose}
+                            className="text-gray-500 hover:text-gray-700"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                </div>
+
+                {/* 문제 목록 */}
+                <div className="px-6 py-4 max-h-[60vh] overflow-y-auto">
+                    {availableSets.length === 0 ? (
+                        <p className="text-gray-500 text-center py-4">
+                            사용 가능한 문제 세트가 없습니다.
+                        </p>
+                    ) : (
+                        <div className="space-y-2">
+                            {availableSets.map(({ name, file }) => (
+                                <button
+                                    key={file}
+                                    onClick={() => onSelect(name, file)}
+                                    className="w-full text-left px-4 py-3 rounded bg-gray-50 hover:bg-blue-50 transition-colors duration-200"
+                                >
+                                    {name}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -7,9 +7,10 @@ type Props = {
     userAnswers: (string | number)[];
     setUserAnswers: (answers: (string | number)[]) => void;
     showResult: boolean;
+    setShowResult: (show: boolean) => void;
 };
 
-const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult }: Props) => {
+const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult, setShowResult }: Props) => {
     const handleChange = (index: number, value: string | number) => {
         if (showResult) return;
         const newAnswers = [...userAnswers];
@@ -54,6 +55,17 @@ const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult }: P
                             {idx + 1}. {q.question}
                         </div>
 
+                        {/* 이미지가 있는 경우 표시 */}
+                        {q.image && (
+                            <div className="mb-4">
+                                <img 
+                                    src={q.image} 
+                                    alt="문제 이미지" 
+                                    className="max-w-full h-auto rounded"
+                                />
+                            </div>
+                        )}
+
                         {q.type === 'objective' && q.choices && (
                             <div className="space-y-1">
                                 {q.choices.map((choice, cIdx) => (
@@ -94,14 +106,28 @@ const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult }: P
                                 <div className="text-gray-700 mt-1">
                                     <strong>정답:</strong> {q.type === 'objective' ? q.choices?.[q.answer as number] : q.answer}
                                 </div>
-                                <div className="text-gray-500 mt-1">
-                                    <strong>설명:</strong> {q.explanation}
-                                </div>
+                                {q.explanation && (
+                                    <div className="text-gray-500 mt-1">
+                                        <strong>설명:</strong> {q.explanation}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
                 ))}
             </div>
+
+            {/* 정답 제출 버튼 추가 */}
+            {!showResult && questions.length > 0 && (
+                <div className="flex justify-center mt-8">
+                    <button
+                        onClick={() => setShowResult(true)}
+                        className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 font-semibold"
+                    >
+                        정답 확인하기
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
