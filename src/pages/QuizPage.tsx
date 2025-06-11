@@ -6,6 +6,11 @@ import { Question, QuestionSet } from 'types';
 import QuestionSetSelector from "components/QuestionSelector";
 import ScrollToTopButton from "components/ScrollToTopButton";
 import { EXAM_TYPE_LABEL_MAP, GRADE_LABEL_MAP, SEMESTER_LABEL_MAP, SUBJECT_LABEL_MAP } from "constants/options";
+import { useNavigate } from "react-router-dom";
+import { WelcomeGuide } from 'components/WelcomeGuide';
+import { FeatureCards } from 'components/FeatureCards';
+import { StartGuide } from 'components/StartGuide';
+import { CreateQuestionSection } from 'components/CreateQuestionSection';
 
 function QuizPage() {
     const [grade, setGrade] = useState("grade3");
@@ -97,6 +102,7 @@ function QuizPage() {
         setLoadError(false);
     }, [grade, semester, examType, subject, loadIndexFile]);
 
+    const navigate = useNavigate();
 
     return (
         <div className="flex min-h-screen bg-gray-100">
@@ -145,52 +151,11 @@ function QuizPage() {
                 {/* 문제가 선택되지 않은 초기 화면 */}
                 {questions.length === 0 && !loadError && (
                     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
-                        {/* 환영 메시지 및 사용 가이드 */}
-                        <div className="text-center space-y-4">
-                            <h2 className="text-3xl font-bold text-gray-700">
-                                📚 문제 풀이 연습을 시작해보세요!
-                            </h2>
-                            <p className="text-gray-600 max-w-2xl">
-                                왼쪽 메뉴에서 학년, 학기, 시험 유형, 과목을 선택한 후,<br/>
-                                '문제 선택' 버튼을 클릭하여 원하는 문제 세트를 선택해주세요.
-                            </p>
-                        </div>
-
-                        {/* 주요 기능 설명 카드들 */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
-                            <div className="bg-white p-6 rounded-lg shadow-md">
-                                <div className="text-2xl mb-3">🎯</div>
-                                <h3 className="font-bold text-lg mb-2">맞춤형 학습</h3>
-                                <p className="text-gray-600">
-                                    다양한 과목과 난이도의 문제들을 선택하여 학습할 수 있습니다.
-                                </p>
-                            </div>
-                            <div className="bg-white p-6 rounded-lg shadow-md">
-                                <div className="text-2xl mb-3">✍️</div>
-                                <h3 className="font-bold text-lg mb-2">즉각적인 피드백</h3>
-                                <p className="text-gray-600">
-                                    문제 풀이 후 바로 정답과 해설을 확인할 수 있습니다.
-                                </p>
-                            </div>
-                            <div className="bg-white p-6 rounded-lg shadow-md">
-                                <div className="text-2xl mb-3">📊</div>
-                                <h3 className="font-bold text-lg mb-2">성적 확인</h3>
-                                <p className="text-gray-600">
-                                    문제 풀이 후 바로 점수와 정답률을 확인할 수 있습니다.
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* 시작 가이드 */}
-                        <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 max-w-2xl w-full">
-                            <h3 className="font-bold text-lg mb-3 text-blue-800">🚀 시작하기</h3>
-                            <ol className="list-decimal list-inside space-y-2 text-blue-700">
-                                <li>왼쪽 사이드바에서 원하는 <strong>학년</strong>을 선택하세요.</li>
-                                <li><strong>학기</strong>와 <strong>시험 유형</strong>을 선택하세요.</li>
-                                <li>학습하고 싶은 <strong>과목</strong>을 선택하세요.</li>
-                                <li>'<strong>문제 선택</strong>' 버튼을 클릭하여 문제 세트를 선택하세요.</li>
-                                <li>문제를 풀고 '<strong>정답 제출</strong>' 버튼을 클릭하여 결과를 확인하세요.</li>
-                            </ol>
+                        <WelcomeGuide />
+                        <FeatureCards />
+                        <div className="w-full max-w-4xl flex flex-col items-center gap-6">
+                            <StartGuide />
+                            <CreateQuestionSection availableSets={availableSets} />
                         </div>
                     </div>
                 )}
