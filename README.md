@@ -1,51 +1,54 @@
-# Getting Started with Create React App
+# 퀴즈 웹 애플리케이션
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+다양한 과목과 학년별 퀴즈를 풀 수 있는 React 기반 웹 애플리케이션입니다. MongoDB Realm을 백엔드로 사용하여 동적으로 문제 세트를 관리하며, GitHub Pages를 통해 배포됩니다.
 
-## Available Scripts
+## ✨ 주요 기능
 
-In the project directory, you can run:
+-   학년, 학기, 시험 종류, 과목별 문제 필터링 기능
+-   MongoDB Realm과 연동하여 동적 문제 세트 로딩
+-   과목별 이용 가능한 문제 세트 개수 표시
+-   객관식 및 주관식 문제 유형 지원
+-   문제 풀이 후 정답 확인 및 채점 기능
+-   Tailwind CSS를 이용한 반응형 UI
+-   GitHub Actions를 통한 자동 배포
 
-### `yarn start`
+## 🚀 기술 스택
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+-   **Frontend**: React, TypeScript, Tailwind CSS
+-   **Backend**: MongoDB Realm (Web SDK)
+-   **Deployment**: GitHub Actions, GitHub Pages
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## ⚙️ 로컬에서 실행하기
 
-### `yarn test`
+1.  **저장소 복제**
+    ```bash
+    git clone https://github.com/gonacon/quiz-webapp.git
+    cd quiz-webapp
+    ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2.  **의존성 설치**
+    ```bash
+    npm install
+    ```
 
-### `yarn build`
+3.  **환경 변수 설정**
+    프로젝트 루트 디렉토리에 `.env` 파일을 생성하고 아래 내용을 추가하세요. Realm 앱 ID는 MongoDB Realm 대시보드에서 확인할 수 있습니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    ```
+    REACT_APP_REALM_APP_ID=Your_MongoDB_Realm_App_ID
+    ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+4.  **개발 서버 실행**
+    ```bash
+    npm start
+    ```
+    브라우저에서 `http://localhost:2000` 주소로 접속할 수 있습니다.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📦 배포
 
-### `yarn eject`
+`main` 브랜치에 코드를 푸시하면 GitHub Actions가 자동으로 빌드 및 배포를 진행합니다.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-
+성공적인 배포를 위해서는 GitHub 저장소의 `Settings > Secrets and variables > Actions` 메뉴에서 `REACT_APP_REALM_APP_ID`를 `Repository secrets`으로 등록해야 합니다.
 
 ## git commit type keyword
 
