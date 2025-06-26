@@ -28,9 +28,8 @@ jobs:
           REACT_APP_REALM_API_KEY: ${{ secrets.REACT_APP_REALM_API_KEY }}
           REACT_APP_MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
 
-      - name: Deploy
-        run: npm run deploy
-        env:
-          REACT_APP_REALM_APP_ID: ${{ secrets.REACT_APP_REALM_APP_ID }}
-          REACT_APP_REALM_API_KEY: ${{ secrets.REACT_APP_REALM_API_KEY }}
-          REACT_APP_MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
