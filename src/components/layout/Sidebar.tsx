@@ -1,7 +1,9 @@
-// File: src/components/Sidebar.tsx
+// File: src/components/layout/Sidebar.tsx
 import React from "react";
-import SelectInput from "components/SelectInput";
-import { EXAM_TYPE_OPTIONS, GRADE_OPTIONS, SEMESTER_OPTIONS } from "constants/options";
+import SelectInput from "components/common/SelectInput";
+import { EXAM_TYPE_OPTIONS, GRADE_OPTIONS, SEMESTER_OPTIONS, SUBJECT_OPTIONS } from "constants/options";
+import { AvailableSet } from "types";
+import { SUBJECT_TRANSLATIONS, UI_MESSAGES, LOADING_MESSAGES } from "constants/messages";
 
 interface Props {
     grade: string;
@@ -13,23 +15,17 @@ interface Props {
     onChangeExamType: (value: string) => void;
     onChangeSubject: (value: string) => void;
     onShowFileSelector: () => void;
-    availableSets: { name: string; file: string }[];
+    availableSets: AvailableSet[];
+    isLoading?: boolean;
 }
 
-const subjects = ['korean', 'math', 'english', 'science', 'social'];
+const subjects = SUBJECT_OPTIONS.map(option => option.value);
 
 const translateSubject = (s: string) => {
-    switch (s) {
-        case 'korean': return '국어';
-        case 'math': return '수학';
-        case 'english': return '영어';
-        case 'science': return '과학';
-        case 'social': return '사회';
-        default: return s;
-    }
+    return SUBJECT_TRANSLATIONS[s as keyof typeof SUBJECT_TRANSLATIONS] || s;
 };
 
-const Sidebar = ({
+const Sidebar = React.memo(({
     grade,
     semester,
     examType,
@@ -40,6 +36,7 @@ const Sidebar = ({
     onChangeSubject,
     onShowFileSelector,
     availableSets,
+    isLoading = false,
 }: Props) => {
     return (
         <div className="w-64 bg-gray-100 p-4 border-r flex flex-col h-screen justify-between">
@@ -92,17 +89,23 @@ const Sidebar = ({
 
                 {/* 문제 선택 버튼 */}
                 <div className="text-center border-t pt-4">
-                    <button
-                        onClick={onShowFileSelector}
-                        disabled={availableSets.length === 0}
-                        className={`w-full px-4 py-2 rounded font-medium transition-colors duration-200 ${availableSets.length > 0
-                            ? 'bg-blue-500 text-white hover:bg-blue-600'
-                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            }`}
-                    >
-                        문제 선택
-                    </button>
-
+                    {isLoading ? (
+                        <div className="flex items-center justify-center px-4 py-2 bg-gray-300 text-gray-500 rounded">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-2"></div>
+                            <span className="text-sm">{LOADING_MESSAGES.LOADING}</span>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={onShowFileSelector}
+                            disabled={availableSets.length === 0}
+                            className={`w-full px-4 py-2 rounded font-medium transition-colors duration-200 ${availableSets.length > 0
+                                ? 'bg-blue-500 text-white hover:bg-blue-600'
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                }`}
+                        >
+                            {UI_MESSAGES.SELECT_QUESTION}
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -119,6 +122,8 @@ const Sidebar = ({
 
         </div>
     );
-};
+});
+
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar;

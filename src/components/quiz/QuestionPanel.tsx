@@ -27,7 +27,7 @@ const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult, set
     return (
         <div>
             {showResult && (
-                <div className="text-lg font-bold text-center text-green-600 mb-6">
+                <div className="text-lg font-bold text-center text-red-600 mb-6">
                     총 점수: {score100}점 (정답 {correctCount}개 / 총 {questions.length}문항)
                 </div>
             )}
@@ -123,7 +123,7 @@ const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult, set
                 <div className="flex justify-center mt-8">
                     <button
                         onClick={() => setShowResult(true)}
-                        className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 font-semibold"
+                        className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 font-semibold"
                     >
                         정답 확인하기
                     </button>

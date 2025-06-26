@@ -1,5 +1,5 @@
 import React from "react";
-import SelectInput from "components/SelectInput";
+import SelectInput from "components/common/SelectInput";
 import { EXAM_TYPE_OPTIONS, GRADE_OPTIONS, SEMESTER_OPTIONS, SUBJECT_OPTIONS } from "constants/options";
 
 interface Props {

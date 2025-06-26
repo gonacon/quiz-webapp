@@ -1,9 +1,11 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import QuestionForm from "components/QuestionForm";
-import ExamSettings from "components/ExamSettings";
-import ScrollToTopButton from "components/ScrollToTopButton";
+import QuestionForm from "components/create/QuestionForm";
+import ExamSettings from "components/create/ExamSettings";
+import ScrollToTopButton from "components/layout/ScrollToTopButton";
 import { exportToJsonFile } from "utils/exportToJsonFile";
+import { INITIAL_FILTER_STATE, DEFAULT_QUESTION_TEMPLATE, QUESTION_TYPES } from "constants/defaults";
+import { UI_MESSAGES } from "constants/messages";
 
 interface Question {
     passageTitle: string;
@@ -18,21 +20,15 @@ interface Question {
 
 const CreateQuestion: React.FC = () => {
     const navigate = useNavigate();
-    const [grade, setGrade] = useState("grade3");
-    const [semester, setSemester] = useState("sem1");
-    const [examType, setExamType] = useState("mid");
-    const [subject, setSubject] = useState("korean");
+    const [grade, setGrade] = useState(INITIAL_FILTER_STATE.grade);
+    const [semester, setSemester] = useState(INITIAL_FILTER_STATE.semester);
+    const [examType, setExamType] = useState(INITIAL_FILTER_STATE.examType);
+    const [subject, setSubject] = useState(INITIAL_FILTER_STATE.subject);
     const [fileName, setFileName] = useState("");
     const [questions, setQuestions] = useState<Question[]>([
         {
-            passageTitle: "",
-            passage: "",
-            question: "",
-            choices: ["", "", "", ""],
-            answer: 0,
-            explanation: "",
-            type: "objective",
-            image: "",
+            ...DEFAULT_QUESTION_TEMPLATE,
+            type: QUESTION_TYPES.OBJECTIVE,
         },
     ]);
 
@@ -83,14 +79,8 @@ const CreateQuestion: React.FC = () => {
         setQuestions([
             ...questions,
             {
-                passageTitle: "",
-                passage: "",
-                question: "",
-                choices: ["", "", "", ""],
-                answer: 0,
-                explanation: "",
-                type: "objective",
-                image: "",
+                ...DEFAULT_QUESTION_TEMPLATE,
+                type: QUESTION_TYPES.OBJECTIVE,
             },
         ]);
 
@@ -117,7 +107,7 @@ const CreateQuestion: React.FC = () => {
                 choices: q.choices,
                 answer: q.answer,
                 explanation: q.explanation,
-                type: "objective",
+                type: QUESTION_TYPES.OBJECTIVE,
                 image: q.image
             })),
         };
@@ -135,7 +125,7 @@ const CreateQuestion: React.FC = () => {
                         onClick={() => navigate("/")}
                         className="bg-blue-500 text-white px-4 mt-4 mb-4 rounded hover:bg-blue-600"
                     >
-                        홈으로
+                        {UI_MESSAGES.HOME}
                     </button>
                     {/* 파일 생성 옵션 */}
                     <ExamSettings
@@ -149,16 +139,16 @@ const CreateQuestion: React.FC = () => {
 
             <div className="p-6 mt-14">
                 <div className="mb-4">
-                    <label className="block font-semibold mb-1">파일 제목 (확장자 제외)</label>
+                    <label className="block font-semibold mb-1">{UI_MESSAGES.FILE_TITLE_LABEL}</label>
                     <input
                         type="text"
                         className="w-full p-2 border"
-                        placeholder="예: 중3_국어_1학기_중간"
+                        placeholder={UI_MESSAGES.FILE_TITLE_PLACEHOLDER}
                         value={fileName}
                         onChange={(e) => setFileName(e.target.value)}
                     />
                 </div>
-                <h1 className="text-2xl font-bold mb-4">문제 생성</h1>
+                <h1 className="text-2xl font-bold mb-4">{UI_MESSAGES.CREATE_QUESTION_TITLE}</h1>
 
                 {/* 문제 생성 폼 */}
                 {questions.map((q, i) => (
@@ -180,14 +170,14 @@ const CreateQuestion: React.FC = () => {
                         onClick={addQuestion}
                         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                     >
-                        문제 추가
+                        {UI_MESSAGES.ADD_QUESTION}
                     </button>
 
                     <button
                         onClick={exportJson}
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     >
-                        JSON 다운로드
+                        {UI_MESSAGES.DOWNLOAD_JSON}
                     </button>
                 </div>
             </div>

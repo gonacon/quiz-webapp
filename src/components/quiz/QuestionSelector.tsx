@@ -1,13 +1,14 @@
 // components/QuestionSetSelector.tsx
 import React from 'react';
+import { AvailableSet } from 'types';
 
 interface Props {
-    availableSets: { name: string; file: string }[];
+    availableSets: AvailableSet[];
     onSelect: (name: string, file: string) => void;
     onClose: () => void;
 }
 
-export default function QuestionSetSelector({ availableSets, onSelect, onClose }: Props) {
+const QuestionSetSelector = React.memo(({ availableSets, onSelect, onClose }: Props) => {
     return (
         // 반투명 오버레이 배경
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -49,4 +50,8 @@ export default function QuestionSetSelector({ availableSets, onSelect, onClose }
             </div>
         </div>
     );
-}
+});
+
+QuestionSetSelector.displayName = 'QuestionSetSelector';
+
+export default QuestionSetSelector;

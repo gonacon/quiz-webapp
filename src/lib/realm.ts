@@ -22,11 +22,11 @@ export async function getQuestionSetsCollection() {
 
         return mongodb.db("quiz_app").collection("question_sets");
 
-    } catch (error) {
+        } catch (error) {
         console.error("Realm 연결 실패!", error);
-        throw error;
+            throw error;
+        }
     }
-}
 
 export async function getQuestionsCollection() {
     try {
@@ -39,7 +39,7 @@ export async function getQuestionsCollection() {
     } catch (error) {
         console.error("Realm 연결 실패!", error);
         throw error;
-    }
+}
 }
 
 
@@ -57,7 +57,7 @@ export async function getQuestionSets(grade: string, semester: string, examType:
       console.error('Realm 연결 실패!', error);
       throw error;
     }
-  }
+}
 
 export async function findQuestions(questionSetId: string) {
   try {
