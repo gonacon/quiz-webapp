@@ -4,7 +4,6 @@ import * as Realm from 'realm-web';
 const app = new Realm.App({ id: process.env.REACT_APP_REALM_APP_ID || '' });
 
 // Realm 사용자 인증
-
 async function getAuthenticatedUser() {
     if (!app.currentUser) {
         await app.logIn(Realm.Credentials.anonymous()); 
