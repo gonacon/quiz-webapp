@@ -1,6 +1,6 @@
 // File: src/components/QuestionPanel.tsx
 import React from "react";
-import { Question } from "types";
+import { Question } from "types/Question";
 
 type Props = {
     questions: Question[];
@@ -66,9 +66,21 @@ const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult, set
                             </div>
                         )}
 
-                        {q.type === 'objective' && q.choices && (
+                        {/* 선택지 또는 주관식 입력 */}
+                        {q.type === 'subjective' ? (
+                            <div>
+                                <input
+                                    type="text"
+                                    value={userAnswers[idx] as string || ''}
+                                    onChange={(e) => handleChange(idx, e.target.value)}
+                                    disabled={showResult}
+                                    className="w-full p-2 border rounded focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="답안을 입력하세요"
+                                />
+                            </div>
+                        ) : (
                             <div className="space-y-1">
-                                {q.choices.map((choice, cIdx) => (
+                                {q.choices && q.choices.map((option, cIdx) => (
                                     <label key={cIdx} className="block">
                                         <input
                                             type="radio"
@@ -79,21 +91,10 @@ const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult, set
                                             disabled={showResult}
                                             className="mr-2"
                                         />
-                                        {choice}
+                                        {option}
                                     </label>
                                 ))}
                             </div>
-                        )}
-
-                        {q.type === 'subjective' && (
-                            <input
-                                type="text"
-                                value={userAnswers[idx] as string}
-                                onChange={(e) => handleChange(idx, e.target.value)}
-                                className="w-full border rounded p-2"
-                                placeholder="정답 입력"
-                                disabled={showResult}
-                            />
                         )}
 
                         {showResult && (
@@ -104,7 +105,7 @@ const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult, set
                                     <div className="text-red-500">❌ 오답입니다.</div>
                                 )}
                                 <div className="text-gray-700 mt-1">
-                                    <strong>정답:</strong> {q.type === 'objective' ? q.choices?.[q.answer as number] : q.answer}
+                                    <strong>정답:</strong> {q.type === 'subjective' ? q.answer : q.choices?.[q.answer as number]}
                                 </div>
                                 {q.explanation && (
                                     <div className="text-gray-500 mt-1">
@@ -117,7 +118,7 @@ const QuestionPanel = ({ questions, userAnswers, setUserAnswers, showResult, set
                 ))}
             </div>
 
-            {/* 정답 제출 버튼 추가 */}
+            {/* 정답 제출 버튼 */}
             {!showResult && questions.length > 0 && (
                 <div className="flex justify-center mt-8">
                     <button
