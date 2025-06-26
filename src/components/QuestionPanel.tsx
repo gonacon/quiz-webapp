@@ -1,6 +1,6 @@
 // File: src/components/QuestionPanel.tsx
 import React from "react";
-import { Question } from "types/Question";
+import { Question } from "types";
 
 type Props = {
     questions: Question[];

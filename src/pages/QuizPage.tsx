@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Sidebar from 'components/Sidebar';
 import QuestionPanel from 'components/QuestionPanel';
-import { Question } from 'types/Question';
+import { Question } from 'types';
 import QuestionSetSelector from "components/QuestionSelector";
 import ScrollToTopButton from "components/ScrollToTopButton";
 import { EXAM_TYPE_LABEL_MAP, GRADE_LABEL_MAP, SEMESTER_LABEL_MAP, SUBJECT_LABEL_MAP } from "constants/options";
@@ -86,7 +86,7 @@ function QuizPage() {
         };
 
         loadData();
-    }, [grade, semester, examType, subject]);
+    }, [loadQuestionSets]);
 
     return (
         <div className="flex min-h-screen bg-gray-100">
