@@ -5,6 +5,9 @@ import { EXAM_TYPE_OPTIONS, GRADE_OPTIONS, SEMESTER_OPTIONS, SUBJECT_OPTIONS } f
 import { AvailableSet } from "types";
 import { SUBJECT_TRANSLATIONS, UI_MESSAGES, LOADING_MESSAGES } from "constants/messages";
 
+// `subject` 속성을 포함할 수 있도록 Prop 타입을 확장합니다.
+type SetWithSubject = AvailableSet & { subject?: string };
+
 interface Props {
     grade: string;
     semester: string;
@@ -15,8 +18,9 @@ interface Props {
     onChangeExamType: (value: string) => void;
     onChangeSubject: (value: string) => void;
     onShowFileSelector: () => void;
-    availableSets: AvailableSet[];
+    availableSets: SetWithSubject[];
     isLoading?: boolean;
+    onReset: () => void;
 }
 
 const subjects = SUBJECT_OPTIONS.map(option => option.value);
@@ -25,7 +29,7 @@ const translateSubject = (s: string) => {
     return SUBJECT_TRANSLATIONS[s as keyof typeof SUBJECT_TRANSLATIONS] || s;
 };
 
-const Sidebar = React.memo(({
+const Sidebar: React.FC<Props> = ({
     grade,
     semester,
     examType,
@@ -37,11 +41,30 @@ const Sidebar = React.memo(({
     onShowFileSelector,
     availableSets,
     isLoading = false,
-}: Props) => {
+    onReset
+}) => {
+    const subjectCounts = React.useMemo(() => {
+        const counts: { [key: string]: number } = {};
+        subjects.forEach(s => {
+            counts[s] = 0;
+        });
+        availableSets.forEach(set => {
+            if (set.subject && counts[set.subject] !== undefined) {
+                counts[set.subject]++;
+            }
+        });
+        return counts;
+    }, [availableSets]);
+
     return (
         <div className="w-64 bg-gray-100 p-4 border-r flex flex-col h-screen justify-between">
             <div>
-                <h2 className="text-lg font-bold mb-4">시험 설정</h2>
+                <h2 
+                    className="text-lg font-bold mb-4 cursor-pointer hover:text-blue-500 transition-colors"
+                    onClick={onReset}
+                >
+                    시험 설정
+                </h2>
 
                 <SelectInput
                     className="mb-3"
@@ -74,10 +97,18 @@ const Sidebar = React.memo(({
                             <button
                                 key={s}
                                 onClick={() => onChangeSubject(s)}
-                                className={`px-3 py-2 rounded text-sm font-medium text-center ${subject === s ? 'bg-blue-500 text-white' : 'bg-white border text-gray-700'
-                                    }`}
+                                className={`px-3 py-2 rounded text-sm font-medium text-center flex justify-between items-center transition-colors ${
+                                    subject === s 
+                                        ? 'bg-blue-500 text-white' 
+                                        : 'bg-white border text-gray-700 hover:bg-gray-50'
+                                }`}
                             >
-                                {translateSubject(s)}
+                                <span>{translateSubject(s)}</span>
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                    subject === s ? 'bg-white text-blue-500' : 'bg-gray-200 text-gray-600'
+                                }`}>
+                                    {subjectCounts[s]}
+                                </span>
                             </button>
                         ))}
                     </div>
@@ -97,8 +128,8 @@ const Sidebar = React.memo(({
                     ) : (
                         <button
                             onClick={onShowFileSelector}
-                            disabled={availableSets.length === 0}
-                            className={`w-full px-4 py-2 rounded font-medium transition-colors duration-200 ${availableSets.length > 0
+                            disabled={availableSets.filter(s => s.subject === subject).length === 0}
+                            className={`w-full px-4 py-2 rounded font-medium transition-colors duration-200 ${availableSets.filter(s => s.subject === subject).length > 0
                                 ? 'bg-blue-500 text-white hover:bg-blue-600'
                                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                 }`}
@@ -122,7 +153,7 @@ const Sidebar = React.memo(({
 
         </div>
     );
-});
+};
 
 Sidebar.displayName = 'Sidebar';
 

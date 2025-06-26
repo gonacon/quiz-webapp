@@ -14,7 +14,7 @@ export const FEATURE_CARDS = [
         title: "성적 확인",
         description: "문제 풀이 후 바로 점수와 정답률을 확인할 수 있습니다.",
     },
-];
+]; 
 
 // 사용자에게 표시되는 메시지 상수
 

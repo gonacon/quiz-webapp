@@ -9,6 +9,10 @@ import QuizContent from "components/quiz/QuizContent";
 import { getQuestionSets, findQuestions } from 'lib/realm';
 import { INITIAL_FILTER_STATE } from 'constants/defaults';
 import { ERROR_MESSAGES } from 'constants/messages';
+import { SUBJECT_OPTIONS } from "constants/options";
+
+// `subject` 속성을 포함하는 확장된 로컬 타입을 정의합니다.
+type SetWithSubject = AvailableSet & { subject: string };
 
 function QuizPage() {
     // 필터 상태
@@ -23,7 +27,7 @@ function QuizPage() {
     const [showResult, setShowResult] = useState(false);
 
     // UI 상태
-    const [availableSets, setAvailableSets] = useState<AvailableSet[]>([]);
+    const [allSets, setAllSets] = useState<SetWithSubject[]>([]);
     const [selectedSetName, setSelectedSetName] = useState<string>("");
     const [showFileSelector, setShowFileSelector] = useState(false);
 
@@ -40,23 +44,28 @@ function QuizPage() {
             setLoadError(false);
             setErrorMessage("");
 
-            const questionSets = await getQuestionSets(grade, semester, examType, subject);
-            
-            const formattedSets: AvailableSet[] = questionSets.map((set: RealmQuestionSet) => ({
-                name: set.name,
-                file: set._id.toString()
-            }));
+            const promises = SUBJECT_OPTIONS.map(async (subjectOption) => {
+                const questionSets = await getQuestionSets(grade, semester, examType, subjectOption.value);
+                return questionSets.map((set: RealmQuestionSet) => ({
+                    name: set.name,
+                    file: set._id.toString(),
+                    subject: subjectOption.value
+                }));
+            });
 
-            setAvailableSets(formattedSets);
+            const results = await Promise.all(promises);
+            const flattenedSets = results.flat();
+            
+            setAllSets(flattenedSets);
         } catch (error) {
             console.error('문제 세트 목록 로딩 실패:', error);
-            setAvailableSets([]);
+            setAllSets([]);
             setLoadError(true);
             setErrorMessage(ERROR_MESSAGES.LOAD_QUESTION_SETS);
         } finally {
             setIsLoading(false);
         }
-    }, [grade, semester, examType, subject]);
+    }, [grade, semester, examType]);
 
     // 문제 선택 처리 함수
     const handleFileSelect = useCallback(async (name: string, setId: string) => {
@@ -110,6 +119,10 @@ function QuizPage() {
     }, [loadQuestionSets, resetQuizState]);
 
     // 메모이제이션된 값들
+    const availableSets = useMemo(() => {
+        return allSets.filter(set => set.subject === subject);
+    }, [allSets, subject]);
+
     const hasQuestions = useMemo(() => questions.length > 0, [questions.length]);
 
     // 문제 선택기 토글 함수
@@ -135,8 +148,9 @@ function QuizPage() {
                 onChangeExamType={setExamType}
                 onChangeSubject={setSubject}
                 onShowFileSelector={toggleFileSelector}
-                availableSets={availableSets}
+                availableSets={allSets}
                 isLoading={isLoading}
+                onReset={resetQuizState}
             />
 
             <div className="flex-1 p-6">
