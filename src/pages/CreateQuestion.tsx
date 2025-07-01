@@ -194,7 +194,7 @@ const CreateQuestion: React.FC = () => {
                     />
                 ))}
 
-                <div className="flex gap-4">
+                <div className="flex justify-between items-center mt-6 mb-7">
                     <button
                         onClick={addQuestion}
                         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -202,22 +202,29 @@ const CreateQuestion: React.FC = () => {
                         {UI_MESSAGES.ADD_QUESTION}
                     </button>
 
+                    {/* JSON 다운로드 버튼은 숨김 처리 (기능은 유지) */}
                     <button
                         onClick={exportJson}
+                        style={{ display: 'none' }}
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     >
                         {UI_MESSAGES.DOWNLOAD_JSON}
                     </button>
+
                     <button
                         onClick={uploadQuiz}
-                        className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 disabled:bg-gray-400"
+                        className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 disabled:bg-gray-400 ml-auto"
                         disabled={isUploading}
+                        style={{ minWidth: 120 }}
                     >
                         {isUploading ? "업로드 중..." : "DB에 업로드"}
                     </button>
                 </div>
             </div>
-            <ScrollToTopButton />
+            {/* ScrollToTopButton이 겹치지 않도록 z-index와 위치 스타일 추가 */}
+            <div style={{ position: 'relative', zIndex: 30 }}>
+                <ScrollToTopButton />
+            </div>
         </div>
     );
 };

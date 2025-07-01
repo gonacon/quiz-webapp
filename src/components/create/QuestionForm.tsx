@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useState } from "react";
 
 interface Question {
   passageTitle: string;
@@ -23,6 +23,8 @@ interface Props {
 
 const QuestionForm = forwardRef<HTMLDivElement, Props>(
   ({ index, question, onChange, onChoiceChange, onRemove, onAddChoice, onRemoveChoice }, ref) => {
+    const [isPasteFocus, setIsPasteFocus] = useState(false);
+
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (file) {
@@ -59,12 +61,12 @@ const QuestionForm = forwardRef<HTMLDivElement, Props>(
 
         <label className="block mb-1">지문 내용</label>
         <textarea
-          className="w-full p-2 border mb-3 h-40"
+          className="w-full p-2 border mb-3 h-20"
           value={question.passage}
           onChange={(e) => onChange(index, "passage", e.target.value)}
         />
 
-        <label className="block mb-1">문제</label>
+        <label className="block mb-1">문제  {index + 1}</label>
         <input
           type="text"
           className="w-full p-2 border mb-3"
@@ -111,7 +113,7 @@ const QuestionForm = forwardRef<HTMLDivElement, Props>(
 
         <label className="block mb-1">해설</label>
         <textarea
-          className="w-full p-2 border mb-3"
+          className="w-full p-2 border mb-3 h-20"
           value={question.explanation}
           onChange={(e) => onChange(index, "explanation", e.target.value)}
         />
@@ -124,6 +126,39 @@ const QuestionForm = forwardRef<HTMLDivElement, Props>(
             onChange={handleImageUpload}
             className="mb-2"
           />
+          {/* 스크린샷(클립보드 이미지) 붙여넣기 지원 */}
+          <div
+            tabIndex={0}
+            onFocus={() => setIsPasteFocus(true)}
+            onBlur={() => setIsPasteFocus(false)}
+            onPaste={e => {
+              const items = e.clipboardData?.items;
+              if (items) {
+                for (let i = 0; i < items.length; i++) {
+                  if (items[i].type.indexOf("image") !== -1) {
+                    const file = items[i].getAsFile();
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        onChange(index, "image", reader.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }
+                }
+              }
+            }}
+            className="border border-dashed border-gray-400 rounded p-2 text-gray-500 text-sm cursor-pointer focus:outline-none relative"
+            style={{ minHeight: 40 }}
+            title="여기에 스크린샷을 붙여넣으세요"
+          >
+            여기에 스크린샷(이미지)을 붙여넣을 수 있습니다.
+            {isPasteFocus && (
+              <div className="absolute left-1 top-full mt-1 text-xs text-blue-600 bg-blue-50 border border-blue-200 rounded px-2 py-1 shadow z-10">
+                Ctrl+V(윈도우) 또는 Command+V(맥)로 이미지를 붙여넣으세요
+              </div>
+            )}
+          </div>
           {question.image && (
             <div className="relative">
               <img 
