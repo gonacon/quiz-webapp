@@ -45,6 +45,7 @@ export const UI_MESSAGES = {
     FILE_TITLE_PLACEHOLDER: '예: 중3_국어_1학기_중간',
     CREATE_QUESTION_TITLE: '문제 생성',
     FILE_TITLE_LABEL: '파일 제목 (확장자 제외)',
+    FILE_TITLE_REQUIRED: '파일 제목을 입력해주세요.',
 } as const;
 
 // 과목 번역

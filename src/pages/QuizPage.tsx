@@ -47,7 +47,7 @@ function QuizPage() {
             const promises = SUBJECT_OPTIONS.map(async (subjectOption) => {
                 const questionSets = await getQuestionSets(grade, semester, examType, subjectOption.value);
                 return questionSets.map((set: RealmQuestionSet) => ({
-                    name: set.name,
+                name: set.name,
                     file: set._id.toString(),
                     subject: subjectOption.value
                 }));
@@ -172,20 +172,20 @@ function QuizPage() {
                         subject={subject}
                         selectedSetName={selectedSetName}
                     />
-                )}
+                    )}
 
                 {/* 메인 콘텐츠 */}
                 <QuizContent
-                    questions={questions}
-                    userAnswers={userAnswers}
-                    setUserAnswers={setUserAnswers}
-                    showResult={showResult}
-                    setShowResult={setShowResult}
+                        questions={questions}
+                        userAnswers={userAnswers}
+                        setUserAnswers={setUserAnswers}
+                        showResult={showResult}
+                        setShowResult={setShowResult}
                     loadError={loadError}
                     availableSets={availableSets}
                     isLoadingQuestions={isLoadingQuestions}
                     errorMessage={errorMessage}
-                />
+                    />
             </div>
             <ScrollToTopButton />
         </div>

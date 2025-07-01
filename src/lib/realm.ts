@@ -61,12 +61,41 @@ export async function getQuestionSets(grade: string, semester: string, examType:
 export async function findQuestions(questionSetId: string) {
   try {
       const user = await getAuthenticatedUser();
-
-    return await user.functions.callFunction("findQuestions", {
-      questionSetId,
-    });
+      return await user.functions.callFunction("findQuestions", {
+        questionSetId,
+      });
   } catch (error) {
     console.error('Realm 함수 호출 실패!', error);
     throw error;
+  }
+}
+
+interface QuestionPayload {
+    passageTitle: string;
+    passage: string;
+    question: string;
+    choices: string[];
+    answer: number;
+    explanation: string;
+    type: string;
+    image: string;
+}
+
+export interface QuizPayload {
+    name: string;
+    grade: string;
+    semester: string;
+    examType: string;
+    subject: string;
+    questions: QuestionPayload[];
+}
+
+export async function createQuestionSet(payload: QuizPayload) {
+  try {
+      const user = await getAuthenticatedUser();
+      return await user.functions.callFunction("createQuestionSet", payload);
+  } catch (error) {
+      console.error('Realm 함수 호출 실패! (createQuestionSet)', error);
+      throw error;
   }
 }

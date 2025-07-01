@@ -6,6 +6,7 @@ import ScrollToTopButton from "components/layout/ScrollToTopButton";
 import { exportToJsonFile } from "utils/exportToJsonFile";
 import { INITIAL_FILTER_STATE, DEFAULT_QUESTION_TEMPLATE, QUESTION_TYPES } from "constants/defaults";
 import { UI_MESSAGES } from "constants/messages";
+import { createQuestionSet, QuizPayload } from "lib/realm";
 
 interface Question {
     passageTitle: string;
@@ -25,12 +26,8 @@ const CreateQuestion: React.FC = () => {
     const [examType, setExamType] = useState(INITIAL_FILTER_STATE.examType);
     const [subject, setSubject] = useState(INITIAL_FILTER_STATE.subject);
     const [fileName, setFileName] = useState("");
-    const [questions, setQuestions] = useState<Question[]>([
-        {
-            ...DEFAULT_QUESTION_TEMPLATE,
-            type: QUESTION_TYPES.OBJECTIVE,
-        },
-    ]);
+    const [questions, setQuestions] = useState<Question[]>([{ ...DEFAULT_QUESTION_TEMPLATE, type: QUESTION_TYPES.OBJECTIVE, },]);
+    const [isUploading, setIsUploading] = useState(false); // ← 추가
 
     const questionRefs = useRef<HTMLDivElement[]>([]);
 
@@ -48,13 +45,15 @@ const CreateQuestion: React.FC = () => {
         setQuestions(updatedQuestions);
     };
 
-    const handleChoiceChange = (
-        qIndex: number,
-        cIndex: number,
-        value: string
-    ) => {
-        const updatedQuestions = [...questions];
-        updatedQuestions[qIndex].choices[cIndex] = value;
+    const handleChoiceChange = (qIndex: number, cIndex: number, value: string) => {
+        const updatedQuestions = questions.map((q, i) => {
+            if (i === qIndex) {
+                const newChoices = [...q.choices];
+                newChoices[cIndex] = value;
+                return { ...q, choices: newChoices };
+            }
+            return q;
+        });
         setQuestions(updatedQuestions);
     };
 
@@ -114,6 +113,36 @@ const CreateQuestion: React.FC = () => {
 
         const filename = `${grade}_${semester}_${examType}_${subject}_set.json`;
         exportToJsonFile(result, filename);
+    };
+
+    const uploadQuiz = async () => {
+        if (!fileName.trim()) {
+            alert(UI_MESSAGES.FILE_TITLE_REQUIRED);
+            return;
+        }
+        setIsUploading(true);
+        try {
+            const payload: QuizPayload = {
+                name: fileName,
+                grade,
+                semester,
+                examType,
+                subject,
+                questions: questions.map(q => ({
+                    ...q,
+                    type: q.type || QUESTION_TYPES.OBJECTIVE,
+                })),
+            };
+            const result = await createQuestionSet(payload);
+            alert("퀴즈가 성공적으로 업로드되었습니다!");
+            console.log("Upload result:", result);
+            // 필요시 navigate('/quiz');
+        } catch (error) {
+            alert("퀴즈 업로드에 실패했습니다. 콘솔을 확인해주세요.");
+            console.error("Upload failed:", error);
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     return (
@@ -178,6 +207,13 @@ const CreateQuestion: React.FC = () => {
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                     >
                         {UI_MESSAGES.DOWNLOAD_JSON}
+                    </button>
+                    <button
+                        onClick={uploadQuiz}
+                        className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 disabled:bg-gray-400"
+                        disabled={isUploading}
+                    >
+                        {isUploading ? "업로드 중..." : "DB에 업로드"}
                     </button>
                 </div>
             </div>

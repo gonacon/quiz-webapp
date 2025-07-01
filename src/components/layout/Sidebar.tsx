@@ -101,7 +101,7 @@ const Sidebar: React.FC<Props> = ({
                                     subject === s 
                                         ? 'bg-blue-500 text-white' 
                                         : 'bg-white border text-gray-700 hover:bg-gray-50'
-                                }`}
+                                    }`}
                             >
                                 <span>{translateSubject(s)}</span>
                                 <span className={`text-xs px-2 py-0.5 rounded-full ${
